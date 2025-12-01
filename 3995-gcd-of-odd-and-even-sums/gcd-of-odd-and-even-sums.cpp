@@ -12,7 +12,7 @@ public:
         int al = 2*n;
         int e_sum =0;
         int o_sum =0;
-        for(int x=0;x<= al;x++){
+        for(int x=0;x< al;x++){
             if(x %2 == 0) e_sum+=x;
             else o_sum+=x;
         }

@@ -11,24 +11,25 @@
 class Solution {
 public:
     bool isPalindrome(ListNode* head) {
-        ListNode* slow =head, *fast = head;
-        while(fast && fast->next){
-            slow = slow->next;
-            fast = fast->next->next;
+        ListNode* fast = head ,*slow = head;
+        while(fast && fast->next ){
+            slow=slow->next;
+            fast= fast->next->next;
         }
+
         ListNode* prev = NULL,*curr = slow;
         while(curr){
-            ListNode*newNode = curr->next;
+            ListNode* newNode = curr->next;
             curr->next = prev;
             prev = curr;
             curr = newNode;
         }
         ListNode* left = head, *right = prev;
         while(right){
-            if(left->val != right->val)return false;
-            left= left->next;
+            if(left->val != right->val) return false;
+            left = left->next;
             right = right->next;
         }
-        return true;
+        return true;        
     }
 };

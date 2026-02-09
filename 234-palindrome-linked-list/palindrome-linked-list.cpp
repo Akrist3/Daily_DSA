@@ -11,28 +11,23 @@
 class Solution {
 public:
     bool isPalindrome(ListNode* head) {
-        if (!head || !head->next) return true; 
-        // Step 1: find the middle (slow and fast pointers)
-        ListNode *slow = head, *fast = head;
-        while (fast && fast->next) {
+        ListNode* slow =head, *fast = head;
+        while(fast && fast->next){
             slow = slow->next;
             fast = fast->next->next;
         }
-        // Step 2: reverse the second half
-        ListNode *prev = nullptr, *curr = slow;
-        while (curr) {
-            ListNode *nextNode = curr->next;
+        ListNode* prev = NULL,*curr = slow;
+        while(curr){
+            ListNode*newNode = curr->next;
             curr->next = prev;
             prev = curr;
-            curr = nextNode;
+            curr = newNode;
         }
-        // Step 3: compare both halves
-        ListNode *first = head, *second = prev;
-        while (second) {
-            if (first->val != second->val)
-                return false;
-            first = first->next;
-            second = second->next;
+        ListNode* left = head, *right = prev;
+        while(right){
+            if(left->val != right->val)return false;
+            left= left->next;
+            right = right->next;
         }
         return true;
     }

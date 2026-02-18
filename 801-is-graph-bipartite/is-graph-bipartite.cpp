@@ -5,7 +5,7 @@ private:
 
         for(auto it : graph[node]){
             if(color[it] == -1){
-                if(dfs(it, 1 - col, color, graph) == false)
+                if(dfs(it, !col, color, graph) == false)
                     return false;
             }
             else if(color[it] == col)

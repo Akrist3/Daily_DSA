@@ -1,39 +1,43 @@
-class Solution {
-private:
-    bool dfs(int node, vector<int>& vis, vector<vector<int>>& adj){
-        
-        vis[node] = 1;   // visiting
-        
-        for(auto adjacentNode : adj[node]){
-            if(vis[adjacentNode] == 0){
-                if(dfs(adjacentNode, vis, adj) == true)
-                    return true;
-            }
-            else if(vis[adjacentNode] == 1){
-                return true;   // cycle found
-            }
-        }
-        
-        vis[node] = 2;   // visited completely
-        return false;
-    }
+#include <bits/stdc++.h>
+using namespace std;
 
+class Solution {
 public:
-    bool canFinish(int v, vector<vector<int>>& prerequisites) {
-        
-        vector<vector<int>> adj(v);
-        
-        // build graph
-        for(auto it : prerequisites){
-            adj[it[1]].push_back(it[0]);
+    bool canFinish(int numCou, vector<vector<int>>& prerequ) {
+
+        // Step 1: Create adjacency list
+        vector<vector<int>> adj(numCou);
+        vector<int> indegree(numCou, 0);
+
+        for (auto &it : prerequ) {
+            adj[it[1]].push_back(it[0]);   // edge
+            indegree[it[0]]++;             // increase indegree
         }
-        vector<int> vis(v, 0);
-        for(int i = 0; i < v; i++){
-            if(vis[i] == 0){
-                if(dfs(i, vis, adj) == true)
-                    return false;   // cycle exists
+
+        // Step 2: Push nodes with indegree 0
+        queue<int> q;
+        for (int i = 0; i < numCou; i++) {
+            if (indegree[i] == 0) {
+                q.push(i);
             }
         }
-        return true;   // no cycle
+
+        // Step 3: Kahn's Algorithm
+        int cnt = 0;
+        while (!q.empty()) {
+            int node = q.front();
+            q.pop();
+            cnt++;
+
+            for (auto it : adj[node]) {
+                indegree[it]--;
+                if (indegree[it] == 0) {
+                    q.push(it);
+                }
+            }
+        }
+
+        // Step 4: Check cycle
+        return cnt == numCou;
     }
 };

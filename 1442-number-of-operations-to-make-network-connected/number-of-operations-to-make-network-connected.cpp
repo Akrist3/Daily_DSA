@@ -1,45 +1,77 @@
+class DisjointSet {
+public:
+    vector<int> rank, parent, size;
+    DisjointSet(int n) {
+        rank.resize(n + 1, 0);
+        parent.resize(n + 1);
+        size.resize(n + 1);
+
+        for (int i = 0; i <= n; i++) {
+            parent[i] = i;
+            size[i] = 1;
+        }
+    }
+
+    int findUpar(int node) {
+        if (node == parent[node])
+            return node;
+        return parent[node] = findUpar(parent[node]);
+    }
+
+    void unionByRank(int u, int v) {
+        int ulp_u = findUpar(u);
+        int ulp_v = findUpar(v);
+
+        if (ulp_u == ulp_v) return;
+
+        if (rank[ulp_u] < rank[ulp_v]) {
+            parent[ulp_u] = ulp_v;
+        }
+        else if (rank[ulp_v] < rank[ulp_u]) {
+            parent[ulp_v] = ulp_u;
+        }
+        else {
+            parent[ulp_v] = ulp_u;
+            rank[ulp_u]++;
+        }
+    }
+
+    void unionBySize(int u, int v) {
+        int ulp_u = findUpar(u);
+        int ulp_v = findUpar(v);
+
+        if (ulp_u == ulp_v) return;
+
+        if (size[ulp_u] < size[ulp_v]) {
+            parent[ulp_u] = ulp_v;
+            size[ulp_v] += size[ulp_u];
+        }
+        else {
+            parent[ulp_v] = ulp_u;
+            size[ulp_u] += size[ulp_v];
+        }
+    }
+};
+
 class Solution {
 public:
-    vector<int> parent, rankv;
-
-    int find(int x){
-        if(parent[x] == x) return x;
-        return parent[x] = find(parent[x]);
-    }
-
-    void unite(int a, int b){
-        int pa = find(a);
-        int pb = find(b);
-
-        if(pa == pb) return;
-
-        if(rankv[pa] < rankv[pb]) parent[pa] = pb;
-        else if(rankv[pb] < rankv[pa]) parent[pb] = pa;
-        else{
-            parent[pb] = pa;
-            rankv[pa]++;
+    int makeConnected(int n, vector<vector<int>>& edge) {
+        DisjointSet ds(n);
+        int cntExtras = 0;
+        for(auto it : edge){
+            int u = it[0];
+            int v = it[1];
+            if(ds.findUpar(u) == ds.findUpar(v))
+                cntExtras++;
+            else
+                ds.unionBySize(u,v);
         }
-    }
-
-    int makeConnected(int n, vector<vector<int>>& connections) {
-
-        if(connections.size() < n-1) return -1;
-
-        parent.resize(n);
-        rankv.resize(n,0);
-
-        for(int i=0;i<n;i++) parent[i] = i;
-
-        for(auto &it : connections){
-            unite(it[0], it[1]);
+        int cntC = 0;
+        for(int i = 0;i<n;i++){
+            if(ds.parent[i] == i)cntC++;
         }
-
-        int components = 0;
-
-        for(int i=0;i<n;i++){
-            if(find(i) == i) components++;
-        }
-
-        return components - 1;
+        int ans = cntC -1;
+        if(cntExtras >= ans) return ans;
+        else return -1;
     }
 };
